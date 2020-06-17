@@ -1,0 +1,15 @@
+.node {
+    width: 25px;
+    height: 25px;
+    outline: 1px solid rgb(175, 216, 248);
+    display: inline-block;
+  }
+
+.node-seeker {
+    background-color: teal;
+}
+
+.node-target {
+    background-color: violet;
+}
+
