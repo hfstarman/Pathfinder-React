@@ -28,25 +28,40 @@ export class Node extends React.Component {
             checked: newChecked
         });
     }*/
+    /*
+    constructor(props) {
+        super(props);
+        this.handleContext = this.handleContext.bind(this);
+    }
 
+    handleMouseDown(e) {
+        console.log(e.type);
+        console.log(e.nativeEvent.which);
+    }*/
 
     render() {
         const {
             row,
             col,
             nodeType,
-            onMouseDown,
+            clickType,
+            onClick,
             onMouseEnter,
-            onMouseUp
+            onMouseUp,
+            onContextMenu,
+            onMouseDown
         } = this.props;
 
         return (
             <div 
             id={`node-${row}-${col}`}
             className={`node node-${nodeType}`}
-            onMouseDown={ () => onMouseDown(row, col) }
+            
+            onClick={ () => onClick(row, col) }
+            onContextMenu={ () => onContextMenu(row, col) }
             onMouseEnter={ () => onMouseEnter(row, col) }
-            onMouseUp={ () => onMouseUp() } >
+            onMouseUp={ () => onMouseUp() } 
+            onMouseDown={ () => onMouseDown(row, col, clickType) } >
             </div>
         );
     }

@@ -16,7 +16,8 @@ export class Grid extends React.Component {
         let alpha_row = .5;
         this.state = {
             gridData: [],
-            mousePressed: false,
+            leftPressed: false,
+            rightPressed: false,
             seekerCoor: {
                 row: Math.floor((NUM_OF_ROWS - 1) * alpha_row),
                 col: Math.floor((NUM_OF_COLS - 1) * alpha_col)
@@ -26,6 +27,7 @@ export class Grid extends React.Component {
                 col: Math.floor((NUM_OF_COLS - 1) * (1 - alpha_col))
             }
         };
+        
     }
 
     componentDidMount() {
@@ -42,33 +44,55 @@ export class Grid extends React.Component {
         
     }
 
-    handleMouseDown(row, col) {
+    handleClick(row, col) {
         const newGrid = changeNodeType(this.state.gridData, row, col, 'obstacle');
         this.setState({
             gridData: newGrid,
-            mousePressed: true
+            leftPressed: true
+        });
+    }
+
+    handleContextMenu(row, col) {
+        const newGrid = changeNodeType(this.state.gridData, row, col, 'empty');
+        this.setState({
+            gridData: newGrid,
+            rightPressed: true
         });
     }
 
     handleMouseEnter(row, col) {
-        if (!this.state.mousePressed) return;
-        const newGrid = changeNodeType(this.state.gridData, row, col, 'obstacle');
+        if (!this.state.leftPressed && !this.state.rightPressed) return;
+        console.log(this.state);
+        const newType = this.state.leftPressed ? 'obstacle' : 'empty';
+        const newGrid = changeNodeType(this.state.gridData, row, col, newType);
         this.setState({
             gridData: newGrid
         });
     }
 
+    handleMouseDown(row, col, clickType) {
+        console.log(row)
+        console.log(col)
+        console.log(clickType)
+    }
+
     handleMouseUp() {
+        console.log("RUNNING HANDLE MOUSE UP!")
         this.setState({
-            mousePressed: false
+            leftPressed: false,
+            rightPressed: false
         });
     }
 
     render() {
         const gridData = this.state.gridData;
+        var clickType = -1;
 
         return (
-            <div className="grid">
+            <div 
+            className="grid" 
+            onMouseDown={ e => {clickType = e.nativeEvent.which;} }
+            onContextMenu={ e => e.preventDefault() }>
                 {
                     gridData.map( (row, rowIndex) => {
                         return (
@@ -84,8 +108,11 @@ export class Grid extends React.Component {
                                            row={row}
                                            col={col}
                                            nodeType={nodeType}
+                                           clickType={clickType}
                                            
-                                           onMouseDown={ (row, col) => this.handleMouseDown(row, col) }
+                                           onMouseDown={ (row, col, clickType) => this.handleMouseDown(row, col, clickType) }
+                                           onClick={ (row, col) => this.handleClick(row, col) }
+                                           onContextMenu={ (row, col) => this.handleContextMenu(row, col) }
                                            onMouseEnter={ (row, col) => this.handleMouseEnter(row, col) }
                                            onMouseUp={ () => this.handleMouseUp() } /> 
                                         );
