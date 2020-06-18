@@ -4,7 +4,7 @@ import './Node.css';
 
 
 export class Node extends React.Component {
-    constructor(props) {
+    /*constructor(props) {
         super(props);
         //this.coors = this.props.coors;
         this.row = this.props.row;
@@ -12,31 +12,52 @@ export class Node extends React.Component {
         this.nodeType = this.props.nodeType;
 
         this.state = {
-            nodeType: 'empty',
             predecessor: null,
             checked: false
         };
     }
 
-    set predecessor(newPred) {
+    setPredecessor(newPred) {
         this.setState({
             predecessor: newPred
         });
     }
 
-    set checked(newChecked) {
+    setChecked(newChecked) {
         this.setState({
             checked: newChecked
         });
-    }
+    }*/
 
 
     render() {
+        const {
+            row,
+            col,
+            nodeType,
+            onMouseDown,
+            onMouseEnter,
+            onMouseUp
+        } = this.props;
+
         return (
             <div 
-            id={`node-${this.row}-${this.col}`}
-            className={`node ${this.nodeType}`} >
+            id={`node-${row}-${col}`}
+            className={`node node-${nodeType}`}
+            onMouseDown={ () => onMouseDown(row, col) }
+            onMouseEnter={ () => onMouseEnter(row, col) }
+            onMouseUp={ () => onMouseUp() } >
             </div>
         );
     }
 }
+
+export const createNodeObj = (row, col, nodeType) => {
+    return {
+        row: row,
+        col: col,
+        nodeType: nodeType,
+        predecessor: null,
+        isChecked: false
+    }
+};
