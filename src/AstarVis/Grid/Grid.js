@@ -16,9 +16,10 @@ export class Grid extends React.Component {
         let alpha_row = .5;
         this.state = {
             gridData: [],
-            temp: null,
-            leftPressed: false,
-            rightPressed: false,
+            drawing: false,
+            erasing: false,
+            dragging: false,
+            nodeToDrag: null,
             seekerCoor: {
                 row: Math.floor((NUM_OF_ROWS - 1) * alpha_row),
                 col: Math.floor((NUM_OF_COLS - 1) * alpha_col)
@@ -30,6 +31,7 @@ export class Grid extends React.Component {
         };
         
     }
+
 
     componentDidMount() {
         const initGrid = createStartingGrid(
@@ -45,45 +47,110 @@ export class Grid extends React.Component {
         
     }
 
+
+    getNode(row, col) {
+        return this.state.gridData[row][col];
+    }
+
+
     handleDrawing(row, col) {
         const newGrid = changeNodeType(this.state.gridData, row, col, 'obstacle');
         this.setState({
             gridData: newGrid,
-            leftPressed: true
+            drawing: true
         });
     }
+
 
     handleErasing(row, col) {
         const newGrid = changeNodeType(this.state.gridData, row, col, 'empty');
         this.setState({
             gridData: newGrid,
-            rightPressed: true
+            erasing: true
         });
+    }
+
+    handleDragging(row, col) {
+        //first check if the new location is empty
+        const node = this.getNode(row, col);
+        if (isNeeded(node) || node.nodeType === 'obstacle') {
+            //DO NOTHING, WE DON'T WANT TO OVERWRITE
+            //NO RERENDER NECESSARY
+        } else {
+            let nodeType = this.state.nodeToDrag;
+            let prev_coor = this.state[`${nodeType}Coor`];
+            let prev_row = prev_coor.row,
+                prev_col = prev_coor.col;
+            
+            //If the draggable node moved...
+            if (!(prev_row === row && prev_col === col)) {
+                let property_str = `${nodeType}Coor`;
+
+                let newGrid = this.state.gridData;
+                newGrid[prev_row][prev_col].nodeType = 'empty';
+                newGrid[row][col].nodeType = nodeType;
+                
+                console.log(property_str)
+                this.setState({
+                    gridData: newGrid,
+                    [property_str]: {row, col}
+                });
+            }
+
+        }
+
+
+
     }
 
     handleMouseEnter(row, col) {
-        if (!this.state.leftPressed && !this.state.rightPressed) return;
-        console.log(this.state);
-        const newType = this.state.leftPressed ? 'obstacle' : 'empty';
-        const newGrid = changeNodeType(this.state.gridData, row, col, newType);
-        this.setState({
-            gridData: newGrid
-        });
+        if (!thereIsCanvasEvent(this.state)) return;
+
+        if (this.state.dragging)
+            this.handleDragging(row, col);
+        else {
+            console.log(this.state);
+            const newType = this.state.drawing ? 'obstacle' : 'empty';
+            const newGrid = changeNodeType(this.state.gridData, row, col, newType);
+            this.setState({
+                gridData: newGrid
+            });
+        }
     }
+
 
     handleMouseDown = (row, col) => (event) => {
         const clickType = event.nativeEvent.which;
-        if (clickType === 1) this.handleDrawing(row, col);
+        if (clickType === 1) {
+            const node = this.getNode(row, col);
+            if (isNeeded(node)) {
+                //might have to do this.setState() here but probably not
+                // this.state.dragging = true;
+                // this.state.nodeToDrag = node.nodeType;
+                this.setState({
+                    dragging: true,
+                    nodeToDrag: node.nodeType
+                });
+                console.log(this.state)
+            } else {
+                this.handleDrawing(row, col);
+            }
+        }
+
         if (clickType === 3) this.handleErasing(row, col);
 
     }
 
+
     handleMouseUp() {
         this.setState({
-            leftPressed: false,
-            rightPressed: false
+            drawing: false,
+            erasing: false,
+            dragging: false,
+            nodeToDrag: null
         });
     }
+
 
     render() {
         const gridData = this.state.gridData;
@@ -91,7 +158,8 @@ export class Grid extends React.Component {
         return (
             <div 
             className="grid" 
-            onContextMenu={ e => e.preventDefault() } >
+            onContextMenu={ e => e.preventDefault() }
+            onMouseDown={ e => e.preventDefault() } >
                 {
                     gridData.map( (row, rowIndex) => {
                         return (
@@ -175,3 +243,14 @@ const isNeeded = (node) => {
 
     return necessaryTypes.some(type => type === node.nodeType);
 };
+
+const thereIsCanvasEvent = (state) => {
+    const possibleEvents = [
+        state.drawing,
+        state.erasing,
+        state.dragging
+    ];
+
+    return possibleEvents.some(e => e);
+
+}
