@@ -16,6 +16,7 @@ export class Grid extends React.Component {
         let alpha_row = .5;
         this.state = {
             gridData: [],
+            temp: null,
             leftPressed: false,
             rightPressed: false,
             seekerCoor: {
@@ -44,7 +45,7 @@ export class Grid extends React.Component {
         
     }
 
-    handleClick(row, col) {
+    handleDrawing(row, col) {
         const newGrid = changeNodeType(this.state.gridData, row, col, 'obstacle');
         this.setState({
             gridData: newGrid,
@@ -52,7 +53,7 @@ export class Grid extends React.Component {
         });
     }
 
-    handleContextMenu(row, col) {
+    handleErasing(row, col) {
         const newGrid = changeNodeType(this.state.gridData, row, col, 'empty');
         this.setState({
             gridData: newGrid,
@@ -70,14 +71,14 @@ export class Grid extends React.Component {
         });
     }
 
-    handleMouseDown(row, col, clickType) {
-        console.log(row)
-        console.log(col)
-        console.log(clickType)
+    handleMouseDown = (row, col) => (event) => {
+        const clickType = event.nativeEvent.which;
+        if (clickType === 1) this.handleDrawing(row, col);
+        if (clickType === 3) this.handleErasing(row, col);
+
     }
 
     handleMouseUp() {
-        console.log("RUNNING HANDLE MOUSE UP!")
         this.setState({
             leftPressed: false,
             rightPressed: false
@@ -86,13 +87,11 @@ export class Grid extends React.Component {
 
     render() {
         const gridData = this.state.gridData;
-        var clickType = -1;
 
         return (
             <div 
             className="grid" 
-            onMouseDown={ e => {clickType = e.nativeEvent.which;} }
-            onContextMenu={ e => e.preventDefault() }>
+            onContextMenu={ e => e.preventDefault() } >
                 {
                     gridData.map( (row, rowIndex) => {
                         return (
@@ -108,11 +107,8 @@ export class Grid extends React.Component {
                                            row={row}
                                            col={col}
                                            nodeType={nodeType}
-                                           clickType={clickType}
                                            
-                                           onMouseDown={ (row, col, clickType) => this.handleMouseDown(row, col, clickType) }
-                                           onClick={ (row, col) => this.handleClick(row, col) }
-                                           onContextMenu={ (row, col) => this.handleContextMenu(row, col) }
+                                           onMouseDown={ (row, col) => this.handleMouseDown(row, col) }
                                            onMouseEnter={ (row, col) => this.handleMouseEnter(row, col) }
                                            onMouseUp={ () => this.handleMouseUp() } /> 
                                         );

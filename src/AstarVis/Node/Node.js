@@ -4,17 +4,14 @@ import './Node.css';
 
 
 export class Node extends React.Component {
-    /*constructor(props) {
+    constructor(props) {
         super(props);
         //this.coors = this.props.coors;
         this.row = this.props.row;
         this.col = this.props.col;
         this.nodeType = this.props.nodeType;
 
-        this.state = {
-            predecessor: null,
-            checked: false
-        };
+        this.handleMouseDown = this.handleMouseDown.bind(this)
     }
 
     setPredecessor(newPred) {
@@ -27,28 +24,33 @@ export class Node extends React.Component {
         this.setState({
             checked: newChecked
         });
-    }*/
+    }/**/
     /*
     constructor(props) {
         super(props);
         this.handleContext = this.handleContext.bind(this);
     }
+    */
 
+    //Give Node a state with its node type? and then set state?
     handleMouseDown(e) {
-        console.log(e.type);
-        console.log(e.nativeEvent.which);
-    }*/
+        console.log(`===========`)
+        console.log(this.props.row)
+        console.log(this.props.col)
+        console.log(e.type)
+        console.log(e.nativeEvent.which)
+        console.log(`===========`)
+    }
 
     render() {
         const {
             row,
             col,
             nodeType,
-            clickType,
-            onClick,
+            //onClick,
             onMouseEnter,
             onMouseUp,
-            onContextMenu,
+            //onContextMenu,
             onMouseDown
         } = this.props;
 
@@ -57,11 +59,11 @@ export class Node extends React.Component {
             id={`node-${row}-${col}`}
             className={`node node-${nodeType}`}
             
-            onClick={ () => onClick(row, col) }
-            onContextMenu={ () => onContextMenu(row, col) }
+            //onClick={ () => onClick(row, col) }
+            //onContextMenu={ () => onContextMenu(row, col) }
             onMouseEnter={ () => onMouseEnter(row, col) }
             onMouseUp={ () => onMouseUp() } 
-            onMouseDown={ () => onMouseDown(row, col, clickType) } >
+            onMouseDown={ (e) => onMouseDown(row, col)(e) } >
             </div>
         );
     }
