@@ -76,30 +76,26 @@ export class Grid extends React.Component {
         if (isNeeded(node) || node.nodeType === 'obstacle') {
             //DO NOTHING, WE DON'T WANT TO OVERWRITE
             //NO RERENDER NECESSARY
-        } else {
-            let nodeType = this.state.nodeToDrag;
-            let prev_coor = this.state[`${nodeType}Coor`];
-            let prev_row = prev_coor.row,
+        } else {           
+            let nodeType = this.state.nodeToDrag,
+                coor_property = `${nodeType}Coor`,
+                prev_coor = this.state[coor_property],
+                prev_row = prev_coor.row,
                 prev_col = prev_coor.col;
             
             //If the draggable node moved...
-            if (!(prev_row === row && prev_col === col)) {
-                let property_str = `${nodeType}Coor`;
-
+            if (!(prev_row === row && prev_col === col)) {              
                 let newGrid = this.state.gridData;
                 newGrid[prev_row][prev_col].nodeType = 'empty';
                 newGrid[row][col].nodeType = nodeType;
                 
-                console.log(property_str)
                 this.setState({
                     gridData: newGrid,
-                    [property_str]: {row, col}
+                    [coor_property]: {row, col}
                 });
             }
 
         }
-
-
 
     }
 
@@ -109,7 +105,7 @@ export class Grid extends React.Component {
         if (this.state.dragging)
             this.handleDragging(row, col);
         else {
-            console.log(this.state);
+            //console.log(this.state);
             const newType = this.state.drawing ? 'obstacle' : 'empty';
             const newGrid = changeNodeType(this.state.gridData, row, col, newType);
             this.setState({
@@ -124,14 +120,10 @@ export class Grid extends React.Component {
         if (clickType === 1) {
             const node = this.getNode(row, col);
             if (isNeeded(node)) {
-                //might have to do this.setState() here but probably not
-                // this.state.dragging = true;
-                // this.state.nodeToDrag = node.nodeType;
                 this.setState({
                     dragging: true,
                     nodeToDrag: node.nodeType
                 });
-                console.log(this.state)
             } else {
                 this.handleDrawing(row, col);
             }

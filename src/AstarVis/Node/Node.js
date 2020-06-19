@@ -4,53 +4,35 @@ import './Node.css';
 
 
 export class Node extends React.Component {
-    constructor(props) {
-        super(props);
-        //this.coors = this.props.coors;
-        this.row = this.props.row;
-        this.col = this.props.col;
-        this.nodeType = this.props.nodeType;
+    // constructor(props) {
+    //     super(props);
+    //     //this.coors = this.props.coors;
+    //     this.row = this.props.row;
+    //     this.col = this.props.col;
+    //     this.nodeType = this.props.nodeType;
 
-        this.handleMouseDown = this.handleMouseDown.bind(this)
-    }
+    //     this.handleMouseDown = this.handleMouseDown.bind(this)
+    // }
 
-    setPredecessor(newPred) {
-        this.setState({
-            predecessor: newPred
-        });
-    }
+    // setPredecessor(newPred) {
+    //     this.setState({
+    //         predecessor: newPred
+    //     });
+    // }
 
-    setChecked(newChecked) {
-        this.setState({
-            checked: newChecked
-        });
-    }/**/
-    /*
-    constructor(props) {
-        super(props);
-        this.handleContext = this.handleContext.bind(this);
-    }
-    */
-
-    //Give Node a state with its node type? and then set state?
-    handleMouseDown(e) {
-        console.log(`===========`)
-        console.log(this.props.row)
-        console.log(this.props.col)
-        console.log(e.type)
-        console.log(e.nativeEvent.which)
-        console.log(`===========`)
-    }
+    // setChecked(newChecked) {
+    //     this.setState({
+    //         checked: newChecked
+    //     });
+    // }
 
     render() {
         const {
             row,
             col,
             nodeType,
-            //onClick,
             onMouseEnter,
             onMouseUp,
-            //onContextMenu,
             onMouseDown
         } = this.props;
 
@@ -59,8 +41,6 @@ export class Node extends React.Component {
             id={`node-${row}-${col}`}
             className={`node node-${nodeType}`}
             
-            //onClick={ () => onClick(row, col) }
-            //onContextMenu={ () => onContextMenu(row, col) }
             onMouseEnter={ () => onMouseEnter(row, col) }
             onMouseUp={ () => onMouseUp() } 
             onMouseDown={ (e) => onMouseDown(row, col)(e) } >
