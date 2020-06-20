@@ -54,7 +54,19 @@ export const createNodeObj = (row, col, nodeType) => {
         row: row,
         col: col,
         nodeType: nodeType,
+        gScore: Infinity,
+        hScore: Infinity,
         predecessor: null,
-        isChecked: false
+        isChecked: false,
+
+        fScore: function () {
+            return this.gScore + this.hScore;
+        },
+
+        compare: function (self, other) {
+            if (self.fScore() === other.fScore())
+                return self.gScore - other.gScore; 
+            return other.fScore() - self.fScore();
+        }
     }
 };
