@@ -17,3 +17,15 @@
     background-color: rgb(25,25,35);
 }
 
+.node-path {
+    background-color: rgb(79,148,205);
+}
+
+.node-inspected {
+    background-color: rgb(230,40,40);
+}
+
+.node-interesting {
+    background-color: rgb(25,255,25);
+}
+

@@ -57,7 +57,7 @@ export const createNodeObj = (row, col, nodeType) => {
         gScore: Infinity,
         hScore: Infinity,
         predecessor: null,
-        isChecked: false,
+        checked: false,
 
         fScore: function () {
             return this.gScore + this.hScore;
@@ -70,3 +70,21 @@ export const createNodeObj = (row, col, nodeType) => {
         }
     }
 };
+
+export const resetNode = node => {
+    node.gScore = Infinity;
+    node.hScore = Infinity;
+    node.predecessor = null;
+    node.checked = false;
+};
+
+export const isPathingNode = node => {
+    const nodeType = node.nodeType;
+    const pathingTypes = [
+        'path',
+        'interesting',
+        'inspected'
+    ];
+
+    return pathingTypes.some( pType => pType === nodeType);
+}

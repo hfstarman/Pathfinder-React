@@ -1,5 +1,6 @@
 import React from 'react';
-import { Node, createNodeObj } from '../Node/Node';
+import { Node, createNodeObj, resetNode, isPathingNode } from '../Node/Node';
+import { astarSearch } from '../Algorithms/astar';
 
 import './Grid.css';
 
@@ -76,7 +77,8 @@ export class Grid extends React.Component {
         if (isNeeded(node) || node.nodeType === 'obstacle') {
             //DO NOTHING, WE DON'T WANT TO OVERWRITE
             //NO RERENDER NECESSARY
-        } else {           
+        } else {    
+            //move node from prev_coor to (row, col)         
             let nodeType = this.state.nodeToDrag,
                 coor_property = `${nodeType}Coor`,
                 prev_coor = this.state[coor_property],
@@ -98,6 +100,7 @@ export class Grid extends React.Component {
         }
 
     }
+
 
     handleMouseEnter(row, col) {
         if (!thereIsCanvasEvent(this.state)) return;
@@ -144,10 +147,47 @@ export class Grid extends React.Component {
     }
 
 
+    runPathfinder() {
+        this.resetGrid();
+        const pathing = astarSearch(this.state);
+        console.log(pathing);
+
+        let newGrid;
+        pathing.forEach( path => {
+            let pRow = path[0],
+                pCol = path[1],
+                nType = path[2];
+            newGrid = changeNodeType(this.state.gridData, pRow, pCol, nType);
+        });
+
+        this.setState({
+            gridData: newGrid
+        });
+    }
+
+
+    resetGrid() {
+        const newGrid = this.state.gridData;
+        newGrid.forEach( row => {
+            row.forEach( node => {
+                resetNode(node);
+                if (isPathingNode(node))
+                    node.nodeType = 'empty';
+            });
+        });
+        this.setState({
+            gridData: newGrid
+        });
+
+    }
+
+
     render() {
         const gridData = this.state.gridData;
 
         return (
+            <div>
+            <button onClick={ () => this.runPathfinder() }>Run Pathfinding</button>
             <div 
             className="grid" 
             onContextMenu={ e => e.preventDefault() }
@@ -178,6 +218,7 @@ export class Grid extends React.Component {
                         );
                     })
                 }
+            </div>
             </div>
         );
     }
