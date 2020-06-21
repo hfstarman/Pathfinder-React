@@ -41,7 +41,7 @@ export class Node extends React.Component {
             id={`node-${row}-${col}`}
             className={`node node-${nodeType}`}
             
-            onMouseEnter={ () => onMouseEnter(row, col) }
+            onMouseEnter={ (e) => onMouseEnter(row, col)(e) }
             onMouseUp={ () => onMouseUp() } 
             onMouseDown={ (e) => onMouseDown(row, col)(e) } >
             </div>

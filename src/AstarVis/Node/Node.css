@@ -7,25 +7,137 @@
 
 .node-seeker {
     background-color: rgb(0,0,200);
+    outline: 0;
 }
 
 .node-target {
     background-color: rgb(148,0,212);
+    outline: 0;
 }
 
 .node-obstacle {
-    background-color: rgb(25,25,35);
+    animation-name: obstacleAnimation;
+    animation-duration: 0.5s;
+    animation-timing-function: ease-out;
+    animation-delay: 0;
+    animation-direction: alternate;
+    animation-iteration-count: 1;
+    animation-fill-mode: forwards;
+    animation-play-state: running;
+    outline: 0;
+}
+
+@keyframes obstacleAnimation {
+    0% {
+      transform: scale(0.6);
+      background-color: rgb(25,25,35);
+    }
+  
+    50% {
+      transform: scale(1.2);
+      background-color: rgb(25,25,35);
+    }
+  
+    100% {
+      transform: scale(1);
+      background-color: rgb(25,25,35);
+    }
 }
 
 .node-path {
-    background-color: rgb(79,148,205);
+    animation-name: pathAnimation;
+    animation-duration: 1.5s;
+    animation-timing-function: ease-out;
+    animation-delay: 0;
+    animation-direction: alternate;
+    animation-iteration-count: 1;
+    animation-fill-mode: forwards;
+    animation-play-state: running;
+    outline: 0;
+}
+/* rgb(79,148,205) */
+@keyframes pathAnimation {
+    0% {
+      transform: scale(0.6);
+      background-color: rgb(255, 255, 30);
+    }
+  
+    50% {
+      transform: scale(1.2);
+      background-color: rgb(255, 255, 30);
+    }
+  
+    100% {
+      transform: scale(1);
+      background-color: rgb(255, 255, 30);
+    }
 }
 
 .node-inspected {
-    background-color: rgb(230,40,40);
+    animation-name: inspectAnimation;
+    animation-duration: 1.5s;
+    animation-timing-function: ease-out;
+    animation-delay: 0;
+    animation-direction: alternate;
+    animation-iteration-count: 1;
+    animation-fill-mode: forwards;
+    animation-play-state: running;
+    outline: 0;
+}
+
+@keyframes inspectAnimation {
+    0% {
+        transform: scale(0.3);
+        background-color: rgba(7, 224, 115, 0.75);
+      }
+    
+      50% {
+        background-color: rgba(17, 217, 150, 0.75);
+      }
+    
+      75% {
+        transform: scale(1.2);
+        background-color: rgba(42, 236, 236, 0.75);
+      }
+    
+      100% {
+        transform: scale(1);
+        background-color: rgba(25, 132, 255, 0.75);
+      }
 }
 
 .node-interesting {
-    background-color: rgb(25,255,25);
+    animation-name: interestingAnimation;
+    animation-duration: 1.5s;
+    animation-timing-function: ease-out;
+    animation-delay: 0;
+    animation-direction: alternate;
+    animation-iteration-count: 1;
+    animation-fill-mode: forwards;
+    animation-play-state: running;
+    outline: 0;
 }
+
+@keyframes interestingAnimation {
+    0% {
+        transform: scale(0.3);
+        background-color: rgba(7, 224, 115, 0.75);
+      }
+    
+      50% {
+        background-color: rgba(17, 217, 150, 0.75);
+      }
+    
+      75% {
+        transform: scale(1.2);
+        background-color: rgba(42, 236, 236, 0.75);
+      }
+    
+      100% {
+        transform: scale(1);
+        background-color: rgba(42, 236, 236, 0.75);
+      }
+}
+
+
 

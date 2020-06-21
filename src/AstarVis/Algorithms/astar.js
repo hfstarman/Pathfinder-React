@@ -59,7 +59,7 @@ export const astarSearch = gridStates => {
         });
 
     }
-    console.log('no Path found')
+
     return astarPathing;
 
 };

@@ -121,7 +121,9 @@ export class Grid extends React.Component {
     }
 
 
-    handleMouseEnter(row, col) {
+    handleMouseEnter = (row, col) => (e) => {
+        //weird bug where mouse up doesn't always register due to the animations
+        if (e.nativeEvent.which === 0) return this.handleMouseUp();
         if (!thereIsCanvasEvent(this.state) || this.state.running) return;
 
         if (this.state.dragging) {
@@ -184,19 +186,19 @@ export class Grid extends React.Component {
     showPathing(pathing, animate) {
         if (animate) this.setState({ running: true });
 
-        for (let i = 0; i < pathing.length; i++) {
+        for (var i = 0; i < pathing.length; i++) {
             const { pRow, pCol, nType } = pathing[i];
 
             if (animate) {
                 setTimeout( () => {
                     this.changeNodeType(pRow, pCol, nType, false);
-                }, 50 * i);
+                }, 10 * i);
             } else {
                 this.changeNodeType(pRow, pCol, nType, false);
             }
         }
-
-        this.setState({ running: false });
+        if (i >= pathing.length)
+            this.setState({ running: false });
     }
 
 
