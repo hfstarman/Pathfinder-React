@@ -62,12 +62,6 @@ export const createNodeObj = (row, col, nodeType) => {
         fScore: function () {
             return this.gScore + this.hScore;
         },
-
-        compare: function (self, other) {
-            if (self.fScore() === other.fScore())
-                return self.gScore - other.gScore; 
-            return other.fScore() - self.fScore();
-        }
     }
 };
 
@@ -78,13 +72,3 @@ export const resetNode = node => {
     node.checked = false;
 };
 
-export const isPathingNode = node => {
-    const nodeType = node.nodeType;
-    const pathingTypes = [
-        'path',
-        'interesting',
-        'inspected'
-    ];
-
-    return pathingTypes.some( pType => pType === nodeType);
-}

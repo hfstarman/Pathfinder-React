@@ -1,7 +1,10 @@
 //var Heap = require("collections/heap");
+
+import { createNodeObj } from "../Node/Node";
+
 //debugger
 export const astarSearch = gridStates => {
-    console.log(gridStates);
+    //console.log(gridStates);
     const {
         gridData,
         seekerCoor,
@@ -27,21 +30,24 @@ export const astarSearch = gridStates => {
         nodesOfInterest.sort(compareFunction);
 
         const currNode = nodesOfInterest.shift();
-        if (currNode === targetNode)
-            return reconstructPath(currNode); //MAKE
-        //console.log(currNode);
-        currNode.checked = true;
-        astarPathing.push([currNode.row, currNode.col, 'inspected']);
+        if (currNode === targetNode) {
+            //Return all nodes search and the optimal path
+            const optimalPath = reconstructPath(currNode).reverse();
+            return astarPathing.concat(optimalPath);
+        }
 
-        const neighborsOfCurrentNode = getNeighbors(gridData, currNode); //MAKE
+        currNode.checked = true;
+        astarPathing.push(createPathingObj(currNode.row, currNode.col, 'inspected'));
+
+        const neighborsOfCurrentNode = getNeighbors(gridData, currNode); 
 
         neighborsOfCurrentNode.forEach( neighbor => {
             if (!neighbor.checked)
-                astarPathing.push([neighbor.row, neighbor.col, 'interesting']);
+                astarPathing.push(createPathingObj(neighbor.row, neighbor.col, 'interesting'));
             
             const tempG = currNode.gScore + 1;
             if (tempG < neighbor.gScore) {
-                neighbor.predcessor = currNode;
+                neighbor.predecessor = currNode;
                 neighbor.gScore = tempG;
 
                 const isInNodesOfInterest = nodesOfInterest.some( node =>
@@ -61,7 +67,7 @@ export const astarSearch = gridStates => {
 
 const compareFunction = (nodeA, nodeB) => {
     if (nodeA.fScore() === nodeB.fScore())
-        return nodeA.gScore - nodeB.gScore;
+        return nodeB.gScore - nodeA.gScore;
     else
         return nodeA.fScore() - nodeB.fScore();
 };
@@ -82,12 +88,21 @@ const calcManhattanDistance = (currNode, targetNode) => {
 
 const reconstructPath = node => {
     const path = []; //Change to Queue
-    while (node.predcessor) {
-        path.push([node.row, node.col, 'path']);
-        node = node.predcessor;
+    while (node.predecessor) {
+        path.push(createPathingObj(node.row, node.col, 'path'));
+        node = node.predecessor;
     }
 
     return path;
+};
+
+
+const createPathingObj = (row, col, nodeType) => {
+    return {
+        pRow: row,
+        pCol: col,
+        nType: nodeType
+    };
 };
 
 

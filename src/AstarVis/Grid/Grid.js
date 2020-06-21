@@ -1,5 +1,5 @@
 import React from 'react';
-import { Node, createNodeObj, resetNode, isPathingNode } from '../Node/Node';
+import { Node, createNodeObj, resetNode } from '../Node/Node';
 import { astarSearch } from '../Algorithms/astar';
 
 import './Grid.css';
@@ -17,6 +17,8 @@ export class Grid extends React.Component {
         let alpha_row = .5;
         this.state = {
             gridData: [],
+            started: false,
+            running: false,
             drawing: false,
             erasing: false,
             dragging: false,
@@ -54,71 +56,90 @@ export class Grid extends React.Component {
     }
 
 
+    changeNodeType(row, col, newType, recalc=true) {
+        const newGrid = this.state.gridData;
+        const node = newGrid[row][col];
+    
+        //If we shouldn't overwrite this node then don't
+        if (isNeeded(node)) return;
+    
+        node.nodeType = newType;
+    
+        if (recalc && node.checked)
+            this.runPathfinder();
+        else
+            this.setState({ gridData: newGrid });
+    }
+
+
     handleDrawing(row, col) {
-        const newGrid = changeNodeType(this.state.gridData, row, col, 'obstacle');
+        this.changeNodeType(row, col, 'obstacle');
         this.setState({
-            gridData: newGrid,
             drawing: true
         });
     }
 
 
     handleErasing(row, col) {
-        const newGrid = changeNodeType(this.state.gridData, row, col, 'empty');
+        const node = this.getNode(row, col);
+        if (!isPathing(node))
+            this.changeNodeType(row, col, 'empty');
         this.setState({
-            gridData: newGrid,
             erasing: true
         });
     }
 
-    handleDragging(row, col) {
+    handleDragging(newRow, newCol) {
+        let moved = false;
         //first check if the new location is empty
-        const node = this.getNode(row, col);
-        if (isNeeded(node) || node.nodeType === 'obstacle') {
-            //DO NOTHING, WE DON'T WANT TO OVERWRITE
-            //NO RERENDER NECESSARY
-        } else {    
+        const node = this.getNode(newRow, newCol);
+        if (isNeeded(node) || node.nodeType === 'obstacle')
+            return moved;    
             //move node from prev_coor to (row, col)         
             let nodeType = this.state.nodeToDrag,
-                coor_property = `${nodeType}Coor`,
-                prev_coor = this.state[coor_property],
-                prev_row = prev_coor.row,
-                prev_col = prev_coor.col;
-            
-            //If the draggable node moved...
-            if (!(prev_row === row && prev_col === col)) {              
-                let newGrid = this.state.gridData;
-                newGrid[prev_row][prev_col].nodeType = 'empty';
-                newGrid[row][col].nodeType = nodeType;
-                
-                this.setState({
-                    gridData: newGrid,
-                    [coor_property]: {row, col}
-                });
-            }
+                coorProperty = `${nodeType}Coor`,
+                prevCoor = this.state[coorProperty],
+                prevRow = prevCoor.row,
+                prevCol = prevCoor.col;
 
+            //If the draggable node moved...
+        if (!(prevRow === newRow && prevCol === newCol)) {  
+            moved = true;            
+            let newGrid = this.state.gridData;
+            newGrid[prevRow][prevCol].nodeType = 'empty';
+            newGrid[newRow][newCol].nodeType = nodeType;
+            //For some reason I have to do this
+            //The state isnt updating right away after setState() ???
+            this.state[coorProperty] = {row: newRow, col: newCol};
+            this.setState({
+                gridData: newGrid,
+                [coorProperty]: {row: newRow, col: newCol}
+            });
         }
 
+        return moved;
     }
 
 
     handleMouseEnter(row, col) {
-        if (!thereIsCanvasEvent(this.state)) return;
+        if (!thereIsCanvasEvent(this.state) || this.state.running) return;
 
-        if (this.state.dragging)
-            this.handleDragging(row, col);
-        else {
-            //console.log(this.state);
-            const newType = this.state.drawing ? 'obstacle' : 'empty';
-            const newGrid = changeNodeType(this.state.gridData, row, col, newType);
-            this.setState({
-                gridData: newGrid
-            });
+        if (this.state.dragging) {
+            const moved = this.handleDragging(row, col);
+            if (moved && this.state.started) this.runPathfinder();
+        } else {
+            this.state.drawing 
+            ? this.handleDrawing(row, col) 
+            : this.handleErasing(row, col);
         }
     }
 
 
     handleMouseDown = (row, col) => (event) => {
+        //Don't want the user to draw on grid when
+        //pathfinding is still animating
+        if (this.state.running) return;
+
         const clickType = event.nativeEvent.which;
         if (clickType === 1) {
             const node = this.getNode(row, col);
@@ -147,22 +168,35 @@ export class Grid extends React.Component {
     }
 
 
-    runPathfinder() {
+    runPathfinder(animate=false) {
         this.resetGrid();
         const pathing = astarSearch(this.state);
-        console.log(pathing);
-
-        let newGrid;
-        pathing.forEach( path => {
-            let pRow = path[0],
-                pCol = path[1],
-                nType = path[2];
-            newGrid = changeNodeType(this.state.gridData, pRow, pCol, nType);
-        });
+        //console.log(pathing);
+        this.showPathing(pathing, animate);
 
         this.setState({
-            gridData: newGrid
+            started: true
         });
+
+    }
+
+
+    showPathing(pathing, animate) {
+        if (animate) this.setState({ running: true });
+
+        for (let i = 0; i < pathing.length; i++) {
+            const { pRow, pCol, nType } = pathing[i];
+
+            if (animate) {
+                setTimeout( () => {
+                    this.changeNodeType(pRow, pCol, nType, false);
+                }, 50 * i);
+            } else {
+                this.changeNodeType(pRow, pCol, nType, false);
+            }
+        }
+
+        this.setState({ running: false });
     }
 
 
@@ -171,7 +205,7 @@ export class Grid extends React.Component {
         newGrid.forEach( row => {
             row.forEach( node => {
                 resetNode(node);
-                if (isPathingNode(node))
+                if (isPathing(node))
                     node.nodeType = 'empty';
             });
         });
@@ -187,7 +221,7 @@ export class Grid extends React.Component {
 
         return (
             <div>
-            <button onClick={ () => this.runPathfinder() }>Run Pathfinding</button>
+            <button onClick={ () => this.runPathfinder(true) }>Run Pathfinding</button>
             <div 
             className="grid" 
             onContextMenu={ e => e.preventDefault() }
@@ -257,17 +291,6 @@ const createObstacle = (grid, row, col) => {
 };
 
 
-const changeNodeType = (grid, row, col, newType) => {
-    const node = grid[row][col];
-
-    //If we shouldn't overwrite this node then don't
-    if (isNeeded(node)) return grid;
-
-    node.nodeType = newType;
-    return grid;
-}
-
-
 const isNeeded = (node) => {
     const necessaryTypes = [
         'seeker',
@@ -276,6 +299,17 @@ const isNeeded = (node) => {
 
     return necessaryTypes.some(type => type === node.nodeType);
 };
+
+const isPathing = node => {
+    const nodeType = node.nodeType;
+    const pathingTypes = [
+        'path',
+        'interesting',
+        'inspected'
+    ];
+
+    return pathingTypes.some( pType => pType === nodeType);
+}
 
 const thereIsCanvasEvent = (state) => {
     const possibleEvents = [
