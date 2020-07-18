@@ -1,8 +1,8 @@
 .grid {
-    margin: 100px 0 0;
+    margin-top: 100px;
 }
 
-.row {
+.gridRow {
     /* Used to remove the space between rows */
     font-size: 0;
 }

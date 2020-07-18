@@ -3,6 +3,8 @@ import { Node, createNodeObj, resetNode } from '../Node/Node';
 import { astarSearch } from '../Algorithms/astar';
 
 import './Grid.css';
+import Button from 'react-bootstrap/Button';
+
 
 const   NUM_OF_ROWS = 20,
         NUM_OF_COLS = 50;
@@ -64,7 +66,7 @@ export class Grid extends React.Component {
         if (isNeeded(node)) return;
     
         node.nodeType = newType;
-    
+        
         if (recalc && node.checked)
             this.runPathfinder();
         else
@@ -186,19 +188,33 @@ export class Grid extends React.Component {
     showPathing(pathing, animate) {
         if (animate) this.setState({ running: true });
 
+        let totalTime = 0;
+        let seqInPath = 0;
         for (var i = 0; i < pathing.length; i++) {
             const { pRow, pCol, nType } = pathing[i];
-
+          
+            //kinda jank, rewrite this
             if (animate) {
+                let timeBetween = 10;
+                if (nType === 'path') {
+                    timeBetween = 45;
+                    seqInPath++;
+                }
+
+                totalTime += timeBetween;
                 setTimeout( () => {
                     this.changeNodeType(pRow, pCol, nType, false);
-                }, 10 * i);
+                }, 10 * i + (45 * seqInPath));
+
             } else {
                 this.changeNodeType(pRow, pCol, nType, false);
             }
         }
-        if (i >= pathing.length)
+
+        setTimeout( () => {
             this.setState({ running: false });
+        }, totalTime);
+        
     }
 
 
@@ -223,7 +239,7 @@ export class Grid extends React.Component {
 
         return (
             <div>
-            <button onClick={ () => this.runPathfinder(true) }>Run Pathfinding</button>
+            <Button variant="primary" onClick={ () => this.runPathfinder(true) }>Run Pathfinding</Button>{' '}
             <div 
             className="grid" 
             onContextMenu={ e => e.preventDefault() }
@@ -233,7 +249,9 @@ export class Grid extends React.Component {
                         return (
                             <div 
                             key={rowIndex}
-                            className="row">
+                            /* for some reason the className cannot
+                            just be called "row" or it gets uncentered */
+                            className="gridRow">
                                 {
                                     row.map( (node, nodeIndex) => {
                                         const { row, col, nodeType } = node;
@@ -261,6 +279,7 @@ export class Grid extends React.Component {
 
 }
 
+
 const createStartingGrid = (rows, cols, seekerCoor, targetCoor) => {
     const initGrid = [];
         for (let row = 0; row < rows ; row++) {
@@ -282,17 +301,6 @@ const createStartingGrid = (rows, cols, seekerCoor, targetCoor) => {
 };
 
 
-//Test out if second createObstacle is better
-//maybe shove this into Node.js
-const createObstacle = (grid, row, col) => {
-    const newGrid = [...grid];
-    const node = newGrid[row][col];
-    node.nodeType = 'obstacle';
-
-    return newGrid;
-};
-
-
 const isNeeded = (node) => {
     const necessaryTypes = [
         'seeker',
@@ -301,6 +309,7 @@ const isNeeded = (node) => {
 
     return necessaryTypes.some(type => type === node.nodeType);
 };
+
 
 const isPathing = node => {
     const nodeType = node.nodeType;
@@ -312,6 +321,7 @@ const isPathing = node => {
 
     return pathingTypes.some( pType => pType === nodeType);
 }
+
 
 const thereIsCanvasEvent = (state) => {
     const possibleEvents = [

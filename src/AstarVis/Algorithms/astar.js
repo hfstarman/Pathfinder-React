@@ -1,6 +1,3 @@
-//var Heap = require("collections/heap");
-
-import { createNodeObj } from "../Node/Node";
 
 //debugger
 export const astarSearch = gridStates => {
@@ -61,7 +58,6 @@ export const astarSearch = gridStates => {
     }
 
     return astarPathing;
-
 };
 
 
