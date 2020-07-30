@@ -6,7 +6,7 @@ import { AstarVis } from './AstarVis/AstarVis';
 
 function App() {
   return (
-    <div className="App">
+    <div className="App">    
       <AstarVis />
     </div>
   );

@@ -1,5 +1,6 @@
 import React from 'react';
 import { Grid } from './Grid/Grid';
+import { MyNavbar } from '../MyNavbar/MyNavbar';
 
 export class AstarVis extends React.Component {
     constructor(props) {
@@ -8,6 +9,10 @@ export class AstarVis extends React.Component {
     }
 
     render() {
-        return <Grid />;
+        return (
+            <div>
+                <Grid rows="20" cols="50"/>
+            </div>
+        );
     }
 }

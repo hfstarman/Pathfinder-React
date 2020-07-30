@@ -1,19 +1,18 @@
 import React from 'react';
 import { Node, createNodeObj, resetNode } from '../Node/Node';
+import { MyNavbar } from '../../MyNavbar/MyNavbar';
 import { astarSearch } from '../Algorithms/astar';
 
 import './Grid.css';
 import Button from 'react-bootstrap/Button';
+import Navbar from 'react-bootstrap/Navbar';
+import DropdownButton from 'react-bootstrap/DropdownButton';
+import Dropdown from 'react-bootstrap/Dropdown';
 
-
-const   NUM_OF_ROWS = 20,
-        NUM_OF_COLS = 50;
 
 export class Grid extends React.Component {
     constructor(props) {
         super(props);
-        this.num_of_cols = NUM_OF_COLS;
-        this.num_of_rows = NUM_OF_ROWS;
 
         let alpha_col = .1;
         let alpha_row = .5;
@@ -26,12 +25,12 @@ export class Grid extends React.Component {
             dragging: false,
             nodeToDrag: null,
             seekerCoor: {
-                row: Math.floor((NUM_OF_ROWS - 1) * alpha_row),
-                col: Math.floor((NUM_OF_COLS - 1) * alpha_col)
+                row: Math.floor((this.props.rows - 1) * alpha_row),
+                col: Math.floor((this.props.cols - 1) * alpha_col)
             },
             targetCoor: {
-                row: Math.floor((NUM_OF_ROWS - 1) * (1 - alpha_row)),
-                col: Math.floor((NUM_OF_COLS - 1) * (1 - alpha_col))
+                row: Math.floor((this.props.rows - 1) * (1 - alpha_row)),
+                col: Math.floor((this.props.cols - 1) * (1 - alpha_col))
             }
         };
         
@@ -40,8 +39,8 @@ export class Grid extends React.Component {
 
     componentDidMount() {
         const initGrid = createStartingGrid(
-            this.num_of_rows,
-            this.num_of_cols,
+            this.props.rows,
+            this.props.cols,
             this.state.seekerCoor,
             this.state.targetCoor
         );
@@ -173,7 +172,7 @@ export class Grid extends React.Component {
 
 
     runPathfinder(animate=false) {
-        this.resetGrid();
+        this.resetPathing();
         const pathing = astarSearch(this.state);
         //console.log(pathing);
         this.showPathing(pathing, animate);
@@ -218,7 +217,7 @@ export class Grid extends React.Component {
     }
 
 
-    resetGrid() {
+    resetPathing() {
         const newGrid = this.state.gridData;
         newGrid.forEach( row => {
             row.forEach( node => {
@@ -228,51 +227,81 @@ export class Grid extends React.Component {
             });
         });
         this.setState({
-            gridData: newGrid
+            gridData: newGrid,
+            started: false
         });
 
     }
 
+    clearBoard() {
+        const newGrid = this.state.gridData;
+        newGrid.forEach( row => {
+            row.forEach( node => {
+                resetNode(node);
+                if(!isNeeded(node)) node.nodeType = 'empty';
+            });
+        });
+        this.setState({
+            gridData: newGrid,
+            started: false
+        });
+    }
 
     render() {
         const gridData = this.state.gridData;
 
         return (
             <div>
-            <Button variant="primary" onClick={ () => this.runPathfinder(true) }>Run Pathfinding</Button>{' '}
-            <div 
-            className="grid" 
-            onContextMenu={ e => e.preventDefault() }
-            onMouseDown={ e => e.preventDefault() } >
-                {
-                    gridData.map( (row, rowIndex) => {
-                        return (
-                            <div 
-                            key={rowIndex}
-                            /* for some reason the className cannot
-                            just be called "row" or it gets uncentered */
-                            className="gridRow">
-                                {
-                                    row.map( (node, nodeIndex) => {
-                                        const { row, col, nodeType } = node;
-                                        return (
-                                           <Node 
-                                           key={nodeIndex}
-                                           row={row}
-                                           col={col}
-                                           nodeType={nodeType}
-                                           
-                                           onMouseDown={ (row, col) => this.handleMouseDown(row, col) }
-                                           onMouseEnter={ (row, col) => this.handleMouseEnter(row, col) }
-                                           onMouseUp={ () => this.handleMouseUp() } /> 
-                                        );
-                                    })
-                                }
-                            </div>
-                        );
-                    })
-                }
-            </div>
+                <Navbar className="nav" bg="dark" variant="dark">
+                    <Navbar.Brand href="#home">React Pathfinder</Navbar.Brand>
+                    <Button variant="success" onClick={ () => this.runPathfinder(true) }>Run Pathfinding</Button>
+                    <DropdownButton id="algo-button" title="Algorithm">
+                        <Dropdown.Item>A* Search</Dropdown.Item>
+                        <Dropdown.Item>Dijkstra's</Dropdown.Item>
+                        <Dropdown.Item>Some Greedy One Here</Dropdown.Item>
+                    </DropdownButton>
+                    <DropdownButton id="maze-gen-button" title="Maze Generation">
+                        <Dropdown.Item>Random</Dropdown.Item>
+                        <Dropdown.Item>Recursive Something</Dropdown.Item>
+                        <Dropdown.Item>One More Here</Dropdown.Item>
+                    </DropdownButton>
+                    <Button onClick={ () => this.clearBoard() }>Clear Board</Button>
+                    <Button onClick={ () => this.resetPathing() }>Remove Pathing</Button>
+                </Navbar>
+                {/* <Button variant="primary" onClick={ () => this.runPathfinder(true) }>Run Pathfinding</Button>{' '} */}
+                <div 
+                className="grid" 
+                onContextMenu={ e => e.preventDefault() }
+                onMouseDown={ e => e.preventDefault() } >
+                    {
+                        gridData.map( (row, rowIndex) => {
+                            return (
+                                <div 
+                                key={rowIndex}
+                                /* for some reason the className cannot
+                                just be called "row" or it gets uncentered */
+                                className="gridRow">
+                                    {
+                                        row.map( (node, nodeIndex) => {
+                                            const { row, col, nodeType } = node;
+                                            return (
+                                            <Node 
+                                            key={nodeIndex}
+                                            row={row}
+                                            col={col}
+                                            nodeType={nodeType}
+                                            
+                                            onMouseDown={ (row, col) => this.handleMouseDown(row, col) }
+                                            onMouseEnter={ (row, col) => this.handleMouseEnter(row, col) }
+                                            onMouseUp={ () => this.handleMouseUp() } /> 
+                                            );
+                                        })
+                                    }
+                                </div>
+                            );
+                        })
+                    }
+                </div>
             </div>
         );
     }
@@ -330,6 +359,7 @@ const thereIsCanvasEvent = (state) => {
         state.dragging
     ];
 
+    //ALl states in the array are booleans
     return possibleEvents.some(e => e);
 
 }

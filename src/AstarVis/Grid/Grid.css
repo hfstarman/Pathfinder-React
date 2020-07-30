@@ -1,8 +1,24 @@
 .grid {
-    margin-top: 100px;
+    margin-top: 50px;
 }
 
 .gridRow {
     /* Used to remove the space between rows */
     font-size: 0;
+}
+
+.nav > Button {
+    margin: 5px 10px;
+}
+
+.dropdown {
+    margin: 5px 10px;
+}
+
+.navbar-brand {
+    font-weight: bold;
+}
+
+.navbar-brand:hover {
+    color: rgba(7, 224, 115, 0.75);
 }
