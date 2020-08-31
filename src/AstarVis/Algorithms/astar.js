@@ -25,7 +25,7 @@ export const astarSearch = (gridStates, heursiticType) => {
     const nodesOfInterest = [seekerNode];
     while (nodesOfInterest.length > 0) {
 
-        nodesOfInterest.sort(compareFunction);
+        nodesOfInterest.sort(compareFunction(heursiticType));
 
         const currNode = nodesOfInterest.shift();
         if (currNode === targetNode) {
@@ -62,12 +62,23 @@ export const astarSearch = (gridStates, heursiticType) => {
 };
 
 
-const compareFunction = (nodeA, nodeB) => {
+const compareFunction = (algo) => {
+    if (algo === 'greedy') return greedyCompare
+    return astarCompare
+}
+
+
+const astarCompare = (nodeA, nodeB) => {
     if (nodeA.fScore() === nodeB.fScore())
         return nodeB.gScore - nodeA.gScore;
     else
         return nodeA.fScore() - nodeB.fScore();
 };
+
+
+const greedyCompare = (nodeA, nodeB) => {
+    return nodeA.hScore - nodeB.hScore
+}
 
 
 const init_h = (gridData, targetNode, heursiticType) => {

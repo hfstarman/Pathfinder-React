@@ -11,7 +11,7 @@ import './Grid.css';
 const searchAlgos = [
     "A* Search",
     "Dijkstra's",
-    "Greedy Best First Search",
+    "Best First Search",
     "Drunk Search"
 ]
 
@@ -199,8 +199,8 @@ export class Grid extends React.Component {
             case "Dijkstra's":
                 pathing = astarSearch(this.state, 'dijkstras')
                 break
-            case "Greedy Best First Search":
-                pathing = []
+            case "Best First Search":
+                pathing = astarSearch(this.state, 'greedy')
                 break
             case "Drunk Search":
                 pathing = astarSearch(this.state, 'drunk')
@@ -317,6 +317,7 @@ export class Grid extends React.Component {
             searchAlgos: searchAlgos,
             changeGridState: this.changeGridState,
             currentAlgo: this.state.currentAlgo,
+            running: this.state.running
         }
 
         return (
