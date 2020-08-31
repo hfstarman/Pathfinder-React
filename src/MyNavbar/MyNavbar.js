@@ -15,7 +15,8 @@ function MyNavbar(props) {
         runMazeGen,
         currentAlgo,
         mazeGens,
-        searchAlgos
+        searchAlgos,
+        running
     } = props.gridControls
 
     const handleChangeAlgo = (e) => {
@@ -60,15 +61,15 @@ function MyNavbar(props) {
     return (
     <Navbar className="nav" bg="dark" variant="dark">
         <Navbar.Brand className="brand" onClick={reloadPage} >React Pathfinder</Navbar.Brand>
-        <Button variant="success" onClick={ () => runPathfinder(true) }>Run {currentAlgo}</Button>
-        <DropdownButton id="algo-button" title="Algorithm">
+        <Button variant={running ? "danger" : "success"} onClick={ () => runPathfinder(true) } disabled={running}>Run {currentAlgo}</Button>
+        <DropdownButton id="algo-button" title="Algorithm" disabled={running} >
             {algosDropdown}
         </DropdownButton>
-        <DropdownButton id="maze-gen-button" title="Maze Generation">
+        <DropdownButton id="maze-gen-button" title="Maze Generation" disabled={running} >
             {mazeGensDropdown}
         </DropdownButton>
-        <Button onClick={clearBoard}>Clear Board</Button>
-        <Button onClick={resetPathing}>Remove Pathing</Button>
+        <Button onClick={clearBoard} disabled={running} >Clear Board</Button>
+        <Button onClick={resetPathing} disabled={running} >Remove Pathing</Button>
     </Navbar>
     )
 }

@@ -1,6 +1,6 @@
 import React from 'react';
 import './App.css';
-import{ Grid } from './AstarVis/Grid/Grid'
+import{ Grid } from './PathfinderVis/Grid/Grid'
 
 
 function App() {
