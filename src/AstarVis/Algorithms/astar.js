@@ -1,7 +1,7 @@
 import { createPathingObj } from '../util/pathingObj'
 
 //debugger
-export const astarSearch = gridStates => {
+export const astarSearch = (gridStates, heursiticType) => {
     //console.log(gridStates);
     const {
         gridData,
@@ -15,7 +15,7 @@ export const astarSearch = gridStates => {
     const astarPathing = []; //Change to Queue
 
     //Set the h score of every node in the grid
-    init_h(gridData, targetNode);
+    init_h(gridData, targetNode, heursiticType);
 
     //seeker should start 0 away form seeker
     seekerNode.gScore = 0;
@@ -70,10 +70,17 @@ const compareFunction = (nodeA, nodeB) => {
 };
 
 
-const init_h = (gridData, targetNode) => {
+const init_h = (gridData, targetNode, heursiticType) => {
     gridData.forEach(row => {
         row.forEach(currNode => {
-            currNode.hScore = calcManhattanDistance(currNode, targetNode);
+            if (heursiticType === 'dijkstras') {
+                currNode.hScore = 0
+            } else if (heursiticType === 'drunk') {
+                currNode.hScore = Infinity
+            } else {
+                // regular astar
+                currNode.hScore = calcManhattanDistance(currNode, targetNode);
+            }
         });
     });
 };

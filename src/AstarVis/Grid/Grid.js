@@ -11,7 +11,8 @@ import './Grid.css';
 const searchAlgos = [
     "A* Search",
     "Dijkstra's",
-    "Greedy Best First Search"
+    "Greedy Best First Search",
+    "Drunk Search"
 ]
 
 const mazeGens = [
@@ -188,7 +189,25 @@ export class Grid extends React.Component {
 
     runPathfinder(animate=false) {
         this.resetPathing();
-        const pathing = astarSearch(this.state);
+
+        const { currentAlgo } = this.state
+        let pathing;
+        switch (currentAlgo) {
+            case "A* Search":
+                pathing = astarSearch(this.state, 'astar')
+                break
+            case "Dijkstra's":
+                pathing = astarSearch(this.state, 'dijkstras')
+                break
+            case "Greedy Best First Search":
+                pathing = []
+                break
+            case "Drunk Search":
+                pathing = astarSearch(this.state, 'drunk')
+                break
+            default:
+                console.log(`Improper Search Algo Name Selected: ${currentAlgo}`)
+        }
         //console.log(pathing);
         this.showPathing(pathing, animate);
 
@@ -211,7 +230,7 @@ export class Grid extends React.Component {
                 blockedBlocks = recursiveDivisionMaze(gridData)
                 break
             default:
-                console.log("Improper Maze Gen Name Selected")
+                console.log(`Improper Maze Gen Name Selected: ${mazeGenName}`)
         }
 
         //using show pathing b/c it it'll do what I want here too
