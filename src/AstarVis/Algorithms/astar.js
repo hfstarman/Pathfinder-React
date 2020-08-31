@@ -1,3 +1,4 @@
+import { createPathingObj } from '../util/pathingObj'
 
 //debugger
 export const astarSearch = gridStates => {
@@ -77,6 +78,7 @@ const init_h = (gridData, targetNode) => {
     });
 };
 
+
 const calcManhattanDistance = (currNode, targetNode) => {
     return Math.abs(currNode.row - targetNode.row) + Math.abs(currNode.col - targetNode.col);
 };
@@ -90,15 +92,6 @@ const reconstructPath = node => {
     }
 
     return path;
-};
-
-
-const createPathingObj = (row, col, nodeType) => {
-    return {
-        pRow: row,
-        pCol: col,
-        nType: nodeType
-    };
 };
 
 
@@ -125,6 +118,7 @@ const getNeighbors = (gridData, currNode) => {
     return neighborArr;
 
 };
+
 
 const isValidNeighbor = (gridData, neighborCoor) => {
     let nRow = neighborCoor[0],

@@ -1,14 +1,22 @@
 import React from 'react';
 import { Node, createNodeObj, resetNode } from '../Node/Node';
-import { MyNavbar } from '../../MyNavbar/MyNavbar';
+import MyNavbar from '../../MyNavbar/MyNavbar';
 import { astarSearch } from '../Algorithms/astar';
+import { randomMaze } from '../MazeGeneration/random'
 
 import './Grid.css';
-import Button from 'react-bootstrap/Button';
-import Navbar from 'react-bootstrap/Navbar';
-import DropdownButton from 'react-bootstrap/DropdownButton';
-import Dropdown from 'react-bootstrap/Dropdown';
 
+
+const searchAlgos = [
+    "A* Search",
+    "Dijkstra's",
+    "Greedy Best First Search"
+]
+
+const mazeGens = [
+    "Random",
+    "Recursive Division"
+]
 
 export class Grid extends React.Component {
     constructor(props) {
@@ -18,6 +26,7 @@ export class Grid extends React.Component {
         let alpha_row = .5;
         this.state = {
             gridData: [],
+            currentAlgo: searchAlgos[0],
             started: false,
             running: false,
             drawing: false,
@@ -33,7 +42,12 @@ export class Grid extends React.Component {
                 col: Math.floor((this.props.cols - 1) * (1 - alpha_col))
             }
         };
-        
+
+        this.runMazeGen = this.runMazeGen.bind(this)
+        this.clearBoard = this.clearBoard.bind(this)
+        this.resetPathing = this.resetPathing.bind(this)
+        this.runPathfinder = this.runPathfinder.bind(this)
+        this.changeGridState = this.changeGridState.bind(this)
     }
 
 
@@ -183,6 +197,26 @@ export class Grid extends React.Component {
 
     }
 
+    runMazeGen(mazeGenName) {
+        this.clearBoard();
+
+        const { gridData } = this.state
+        let blockedBlocks;
+        switch(mazeGenName) {
+            case "Random":
+                blockedBlocks = randomMaze(gridData)
+                break
+            case "Recursive Division":
+                blockedBlocks = undefined
+                break
+            default:
+                console.log("Improper Maze Gen Name Selected")
+        }
+
+        //using show pathing b/c it it'll do what I want here too
+        this.showPathing(blockedBlocks, true)
+
+    }
 
     showPathing(pathing, animate) {
         if (animate) this.setState({ running: true });
@@ -247,28 +281,26 @@ export class Grid extends React.Component {
         });
     }
 
+    changeGridState(stateObj) {
+        this.setState(stateObj)
+    }
+
     render() {
         const gridData = this.state.gridData;
+        const gridControls = {
+            clearBoard: this.clearBoard,
+            resetPathing: this.resetPathing,
+            runPathfinder: this.runPathfinder,
+            runMazeGen: this.runMazeGen,
+            mazeGens: mazeGens,
+            searchAlgos: searchAlgos,
+            changeGridState: this.changeGridState,
+            currentAlgo: this.state.currentAlgo,
+        }
 
         return (
             <div>
-                <Navbar className="nav" bg="dark" variant="dark">
-                    <Navbar.Brand href="#home">React Pathfinder</Navbar.Brand>
-                    <Button variant="success" onClick={ () => this.runPathfinder(true) }>Run Pathfinding</Button>
-                    <DropdownButton id="algo-button" title="Algorithm">
-                        <Dropdown.Item>A* Search</Dropdown.Item>
-                        <Dropdown.Item>Dijkstra's</Dropdown.Item>
-                        <Dropdown.Item>Some Greedy One Here</Dropdown.Item>
-                    </DropdownButton>
-                    <DropdownButton id="maze-gen-button" title="Maze Generation">
-                        <Dropdown.Item>Random</Dropdown.Item>
-                        <Dropdown.Item>Recursive Something</Dropdown.Item>
-                        <Dropdown.Item>One More Here</Dropdown.Item>
-                    </DropdownButton>
-                    <Button onClick={ () => this.clearBoard() }>Clear Board</Button>
-                    <Button onClick={ () => this.resetPathing() }>Remove Pathing</Button>
-                </Navbar>
-                {/* <Button variant="primary" onClick={ () => this.runPathfinder(true) }>Run Pathfinding</Button>{' '} */}
+                <MyNavbar gridControls={gridControls} />
                 <div 
                 className="grid" 
                 onContextMenu={ e => e.preventDefault() }

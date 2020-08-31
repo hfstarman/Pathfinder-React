@@ -4,28 +4,6 @@ import './Node.css';
 
 
 export class Node extends React.Component {
-    // constructor(props) {
-    //     super(props);
-    //     //this.coors = this.props.coors;
-    //     this.row = this.props.row;
-    //     this.col = this.props.col;
-    //     this.nodeType = this.props.nodeType;
-
-    //     this.handleMouseDown = this.handleMouseDown.bind(this)
-    // }
-
-    // setPredecessor(newPred) {
-    //     this.setState({
-    //         predecessor: newPred
-    //     });
-    // }
-
-    // setChecked(newChecked) {
-    //     this.setState({
-    //         checked: newChecked
-    //     });
-    // }
-
     render() {
         const {
             row,

@@ -1,13 +1,12 @@
 import React from 'react';
 import './App.css';
-
-import { AstarVis } from './AstarVis/AstarVis';
+import{ Grid } from './AstarVis/Grid/Grid'
 
 
 function App() {
   return (
     <div className="App">    
-      <AstarVis />
+      <Grid rows="20" cols="50"/>
     </div>
   );
 }
