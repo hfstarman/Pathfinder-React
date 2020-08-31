@@ -6,7 +6,7 @@ import{ Grid } from './AstarVis/Grid/Grid'
 function App() {
   return (
     <div className="App">    
-      <Grid rows="20" cols="50"/>
+      <Grid rows="21" cols="51"/>
     </div>
   );
 }

@@ -53,10 +53,6 @@ function MyNavbar(props) {
         
     })
 
-    //handler that changes current algo state
-
-    //handler that creates a new maze (no state change)
-
     const reloadPage = () => {
         window.location.reload()
     }
@@ -78,26 +74,3 @@ function MyNavbar(props) {
 }
 
 export default MyNavbar
-
-
-// import React from 'react';
-
-// export class MyNavbar extends React.Component {
-//     constructor(props) {
-//         super(props);
-//         this.state = {};
-//     }
-
-//     render() {
-//         const {
-//             pathfinding
-//         } = this.props;
-
-
-//         return (
-//             <Navbar class="navbar-dark">
-//                 <Button onClick={ () => pathfinding() }>Run Pathfinding</Button>
-//             </Navbar>
-//         );
-//     }
-// }

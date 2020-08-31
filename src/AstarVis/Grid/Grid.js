@@ -3,6 +3,7 @@ import { Node, createNodeObj, resetNode } from '../Node/Node';
 import MyNavbar from '../../MyNavbar/MyNavbar';
 import { astarSearch } from '../Algorithms/astar';
 import { randomMaze } from '../MazeGeneration/random'
+import { recursiveDivisionMaze } from '../MazeGeneration/recursiveDivision'
 
 import './Grid.css';
 
@@ -207,7 +208,7 @@ export class Grid extends React.Component {
                 blockedBlocks = randomMaze(gridData)
                 break
             case "Recursive Division":
-                blockedBlocks = undefined
+                blockedBlocks = recursiveDivisionMaze(gridData)
                 break
             default:
                 console.log("Improper Maze Gen Name Selected")
@@ -219,6 +220,7 @@ export class Grid extends React.Component {
     }
 
     showPathing(pathing, animate) {
+        if (pathing === undefined) return
         if (animate) this.setState({ running: true });
 
         let totalTime = 0;
