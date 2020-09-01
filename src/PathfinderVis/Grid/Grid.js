@@ -253,10 +253,6 @@ export class Grid extends React.Component {
                 if (nType === 'path') {
                     timeBetween = 45;
                     seqInPath++;
-                } else {
-                    setTimeout( () => {
-                        this.changeNodeType(pRow, pCol, 'head', false)
-                    }, 10 * i)
                 }
 
                 totalTime += timeBetween;
@@ -265,7 +261,6 @@ export class Grid extends React.Component {
                 }, 10 * (i+1) + (45 * seqInPath));
 
             } else {
-                console.log("hwat");
                 this.changeNodeType(pRow, pCol, nType, false);
             }
         }
